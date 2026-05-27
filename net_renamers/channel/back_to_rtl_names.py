@@ -1,8 +1,16 @@
+#!/usr/bin/env python
+
 import re
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-i', help='Input XDC file.')
+parser.add_argument('-o', help='Output XDC file.')
+args = parser.parse_args()
 
 out_lines = []
 
-with open('channel_xc7a100t_fgg484/release/a7fgg484_v7.xdc') as f:
+with open(args.i) as f:
     for l in f:
         r_adc_dat = r'adc_(\d)_dat_(\d{1,2})_([pn])'
         m_adc_dat = re.search(r_adc_dat, l)
@@ -70,6 +78,6 @@ with open('channel_xc7a100t_fgg484/release/a7fgg484_v7.xdc') as f:
             #print(l[:-1])
             out_lines.append(l)
 
-with open('channel_xc7a100t_fgg484/rtl_names/a7fgg484_v7_rtl_names.xdc', 'w') as f:
+with open(args.o, 'w') as f:
     for l in out_lines:
         f.write(l)
