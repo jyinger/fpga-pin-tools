@@ -1,5 +1,14 @@
+#!/usr/bin/env python
+
+import argparse
 import csv
 import itertools
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-vivado', help='Vivado pin CSV.')
+parser.add_argument('-from_edf', help='Altium pin CSV.')
+parser.add_argument('-o', help='Output CSV file.')
+args = parser.parse_args()
 
 #import pdb#; pdb.set_trace()
 #import sys
@@ -43,7 +52,7 @@ fc_net = 'Signal Name'
 #'Board Signal'
 #'Board Voltage'
 
-with open('a7fgg484_v9.csv') as f:
+with open(args.vivado) as f:
     cr = csv.reader(f)
 
     # Throw away the header
@@ -66,7 +75,7 @@ with open('a7fgg484_v9.csv') as f:
 #list(string.ascii_uppercase)
 #for 
 
-with open('board_nets_pins.csv') as f:
+with open(args.from_edf) as f:
     cr = csv.reader(f)
     for r in cr:
         net, pin = r
@@ -89,7 +98,7 @@ for k, v in report.items():
         v[k_brd_net] = "NC"
         report[k] = v
 
-with open('fpga_schem_net_report.csv', 'w') as f:
+with open(args.o, 'w') as f:
     cw = csv.writer(f)
 
     c_hdr = [k_brd_net, k_fpga_net, k_fpga_site]
