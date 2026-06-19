@@ -55,10 +55,13 @@ fc_net = 'Signal Name'
 with open(args.vivado) as f:
     cr = csv.reader(f)
 
-    # Throw away the header
-    list(itertools.islice(cr, 6))
+    # Find the header
+    header_found = False
+    while not header_found:
+        header = cr.__next__()
+        if len(header) > 0 and header[0] == 'IO Bank':
+            header_found = True
 
-    header = cr.__next__()
     header_asoc = {}
     for i in range(len(header)):
         header_asoc[header[i]] = i
