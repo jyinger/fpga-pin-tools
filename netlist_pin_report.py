@@ -6,7 +6,7 @@ import itertools
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-vivado', help='Vivado pin CSV.')
-parser.add_argument('-from_edf', help='Altium pin CSV.')
+parser.add_argument('-from_edf', help='Pin CSV from bunnie-netlist-checker from EDF.')
 parser.add_argument('-o', help='Output CSV file.')
 args = parser.parse_args()
 
@@ -70,10 +70,6 @@ with open(args.vivado) as f:
         report[pin][k_fpga_net] = r[header_asoc[fc_net]]
         report[pin][k_fpga_site] = r[header_asoc[fc_site]]
 
-# Check that all pins are represented
-#import string
-#list(string.ascii_uppercase)
-#for 
 
 with open(args.from_edf) as f:
     cr = csv.reader(f)
