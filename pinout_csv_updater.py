@@ -129,19 +129,15 @@ with open(args.o, 'w') as f_out:
         if pin in pin_net_map:
             new_net = pin_net_map[pin]
             if net != new_net:
-                if net == '':
-                    if new_net in net_std_map:
-                        print("Change: Swap B")
-                        r = io_intrinsics(r) + net_std_map[new_net]
-
-                    else:
-                        print("Change: Add")
-                        r = io_intrinsics(r) + ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
-                        r[header_asoc[fc_net]] = new_net
-                        r[header_asoc[fc_diffpair]] = other_pair_member(new_net)
-                else:
-                    print("Change: Swap A")
+                if new_net in net_std_map:
+                    print("Change: Swap")
                     r = io_intrinsics(r) + net_std_map[new_net]
+
+                else:
+                    print("Change: Add")
+                    r = io_intrinsics(r) + ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
+                    r[header_asoc[fc_net]] = new_net
+                    r[header_asoc[fc_diffpair]] = other_pair_member(new_net)
         else:
             new_net = ''
             if net != new_net:
