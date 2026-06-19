@@ -85,20 +85,19 @@ with open(args.vivado) as f_in:
         csv_in_rows.append(r)
 
 
-def io_details(row):
+def io_settings(row):
     return row[header_asoc[fc_net]:]
+
+def io_intrinsics(row):
+    return row[:header_asoc[fc_net]]
 
 
 net_std_map = {}
 for r in csv_in_rows:
     net = r[header_asoc[fc_net]]
     if net != '':
-        net_std_map[net] = io_details(r)
-    else:
-        if site_is_io(r[header_asoc[fc_site]]):
-            print(r)
-            print(io_details(r))
-            print('')
+        net_std_map[net] = io_settings(r)
+
 
 #for k, v in net_std_map.items():
 #    print((k, v))
@@ -111,8 +110,6 @@ def other_pair_member(net):
         return net.replace('_p', '_n')
 
 
-# TODO UESE ME: ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
-
 with open(args.o, 'w') as f_out:
     csv_out = csv.writer(f_out)
 
@@ -124,24 +121,35 @@ with open(args.o, 'w') as f_out:
     csv_out.writerow(header)
 
     for r in csv_in_rows:
-
         pin = r[header_asoc[fc_pin]]
-
-
         net = r[header_asoc[fc_net]]
+
+        orig_r = r.copy()
+
         if pin in pin_net_map:
             new_net = pin_net_map[pin]
             if net != new_net:
-                print("Change: Swap or Add")
+                if net == '':
+                    if new_net in net_std_map:
+                        print("Change: Swap B")
+                        r = io_intrinsics(r) + net_std_map[new_net]
+
+                    else:
+                        print("Change: Add")
+                        r = io_intrinsics(r) + ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
+                        r[header_asoc[fc_net]] = new_net
+                        r[header_asoc[fc_diffpair]] = other_pair_member(new_net)
+                else:
+                    print("Change: Swap A")
+                    r = io_intrinsics(r) + net_std_map[new_net]
         else:
             new_net = ''
             if net != new_net:
                 print("Change: Remove")
+                r = io_intrinsics(r) + ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
 
         if net != new_net:
-            print(r)
-            r[header_asoc[fc_net]] = new_net
-            r[header_asoc[fc_diffpair]] = other_pair_member(new_net)
+            print(orig_r)
             print(r)
             print('')
 
